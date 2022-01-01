@@ -257,14 +257,15 @@ namespace ASCOM.HomeMade
         {
             try
             {
-                SharedResources.LogMessage("GetStatusAndTemperature", "Getting status");
-                DeviceStatus status;
-                status = ParseStatus(SharedResources.GetStatus());
                 SharedResources.LogMessage("GetStatusAndTemperature", "Getting temperature");
                 DeviceStatus temp = ParseTemperature(SharedResources.GetTemperature());
+                SharedResources.LogMessage("GetStatusAndTemperature", "Getting status");
+                DeviceStatus status = ParseStatus(SharedResources.GetStatus());
                 if (status != null)
                     if (temp != null)
                         status.externalTemperature = temp.externalTemperature;
+                if (status.speed > 0) isMoving = true;
+                else isMoving = false;
                 if (status!=null) deviceStatus = status;
             }
             catch (Exception e)
@@ -403,10 +404,6 @@ namespace ASCOM.HomeMade
             {
                 SharedResources.LogMessage("IsMoving", "Checking is focuser is moving");
                 CheckConnected("IsMoving");
-
-                // Read the speed until 0
-                if (deviceStatus.speed > 0) isMoving = true;
-                else isMoving = false;
 
                 SharedResources.LogMessage("IsMoving", "Focuser is "+(isMoving?"":"not")+" moving");
                 return isMoving;
