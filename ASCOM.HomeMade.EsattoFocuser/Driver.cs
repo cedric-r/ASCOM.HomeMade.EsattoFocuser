@@ -453,11 +453,11 @@ namespace ASCOM.HomeMade
             if (Position == deviceStatus.position) return;
 
             isMoving = true;
-            if (SharedResources.Move(Position))
+            if (!SharedResources.Move(Position))
             {
-                isMoving = true;
+                isMoving = false;
+                SharedResources.LogMessage("Move", "Move error");
             }
-            isMoving = false;
 
             SharedResources.LogMessage("Move", "Move order done");
         }
