@@ -135,7 +135,7 @@ namespace ASCOM.HomeMade
         public void CommandBlind(string command, bool raw)
         {
             //CheckConnected("CommandBlind");
-            SharedResources.LogMessage("CommandBlind", "Command: {0}, raw: {1}", command, raw.ToString());
+            SharedResources.LogMessage("CommandBlind", "Command: "+command+", raw: "+ raw.ToString());
 
             if (raw)
             {
@@ -455,7 +455,7 @@ namespace ASCOM.HomeMade
 
         public void Move(int Position)
         {
-            SharedResources.LogMessage("Move", "Move motor to '{0}'", Position);
+            SharedResources.LogMessage("Move", "Move motor to "+ Position);
 
             CheckConnected("Move");
 

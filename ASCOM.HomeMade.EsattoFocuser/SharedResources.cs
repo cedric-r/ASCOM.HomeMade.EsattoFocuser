@@ -89,7 +89,7 @@ namespace ASCOM.HomeMade
                 }
 
                 SharedSerial.PortName = value;
-                LogMessage("SharedResources::COMPortName", "New serial port name: {0}", value);
+                LogMessage("SharedResources::COMPortName", "New serial port name: "+ value);
             }
         }
 
@@ -114,7 +114,7 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                LogMessage("SharedResources::Connected", "SharedSerial.Connected: {0}", SharedSerial.Connected);
+                LogMessage("SharedResources::Connected", "SharedSerial.Connected: "+ SharedSerial.Connected.ToString());
                 return SharedSerial.Connected;
             }
             set
@@ -250,19 +250,19 @@ namespace ASCOM.HomeMade
                 {
                     SharedSerial.ClearBuffers();
                     SharedSerial.Transmit(CMD_START + message + CMD_END);
-                    LogMessage("SharedResources::SendSerialMessage", "Message: {0}", CMD_START + message + CMD_END);
+                    LogMessage("SharedResources::SendSerialMessage", "Message: "+ CMD_START + message + CMD_END);
 
                     try
                     {
                         retval = Receive();
-                        LogMessage("SharedResources::SendSerialMessage", "Message received: {0}", retval);
+                        LogMessage("SharedResources::SendSerialMessage", "Message received: "+ retval);
                     }
                     catch (Exception e)
                     {
                         LogMessage("SharedResources::SendSerialMessage", "Serial timeout exception while receiving data: " + e.Message + "\n" + e.StackTrace);
                     }
 
-                    LogMessage("SharedResources::SendSerialMessage", "Message sent: {0} received: {1}", CMD_START + message + CMD_END, retval);
+                    LogMessage("SharedResources::SendSerialMessage", "Message sent: "+ CMD_START + message + CMD_END + " received: "+ retval);
                 }
             }
             else
@@ -281,7 +281,7 @@ namespace ASCOM.HomeMade
                 lock (lockObject)
                 {
                     SharedSerial.Transmit(CMD_START + message + CMD_END);
-                    LogMessage("SharedResources::SendSerialMessage", "Message: {0}", CMD_START + message + CMD_END);
+                    LogMessage("SharedResources::SendSerialMessage", "Message: "+ CMD_START + message + CMD_END);
                 }
             }
             else
@@ -307,9 +307,9 @@ namespace ASCOM.HomeMade
             return temp;
         }
 
-        internal static void LogMessage(string identifier, string message, params object[] args)
+        internal static void LogMessage(string identifier, string message)
         {
-            var msg = string.Format(message, args);
+            var msg = string.Format(message);
             LogMessage(DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString() + ": " + identifier + ": " + msg);
         }
 
