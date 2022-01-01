@@ -269,7 +269,7 @@ namespace ASCOM.HomeMade
                     }
                     else
                     {
-                        status.externalTemperature = deviceStatus.externalTemperature;
+                        if (deviceStatus != null) status.externalTemperature = deviceStatus.externalTemperature;
                     }
                     if (status.speed > 0) isMoving = true;
                     else isMoving = false;
