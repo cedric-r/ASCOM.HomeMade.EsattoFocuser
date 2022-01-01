@@ -231,7 +231,7 @@ namespace ASCOM.HomeMade
 
                     statusThread = new Thread(new ThreadStart(() =>
                     {
-                        GetStatus();
+                        GetStatusThreadJob();
                     }));
                     statusThread.IsBackground = true;
                     statusThread.Start();
@@ -251,30 +251,36 @@ namespace ASCOM.HomeMade
             }
         }
 
-        private void GetStatus()
+        private void GetStatusThreadJob()
         {
             while(!stopGetStatus)
             {
-                try
+                GetStatusAndTemperature();
+                Thread.Sleep(500);
+            }
+        }
+
+        private void GetStatusAndTemperature()
+        {
+            try
+            {
+                SharedResources.LogMessage("GetStatusAndTemperature", "Getting status");
+                lock (lockObject)
                 {
-                    SharedResources.LogMessage("GetStatus", "Getting status");
-                    lock (lockObject)
-                    {
-                        deviceStatus = ParseStatus(SharedResources.GetStatus());
-                    }
-                    lock (lockObject)
-                    {
-                        DeviceStatus temp = ParseTemperature(SharedResources.GetTemperature());
-                        if (deviceStatus != null)
-                            if (temp != null)
-                                deviceStatus.externalTemperature = temp.externalTemperature;
-                    }
-                    Thread.Sleep(500);
+                    deviceStatus = ParseStatus(SharedResources.GetStatus());
                 }
-                catch(Exception e)
+                SharedResources.LogMessage("GetStatusAndTemperature", "Getting temperature");
+                lock (lockObject)
                 {
-                    SharedResources.LogMessage("GetStatus", "Error: " + e.Message + "\n" + e.StackTrace);
+                    DeviceStatus temp = ParseTemperature(SharedResources.GetTemperature());
+                    if (deviceStatus != null)
+                        if (temp != null)
+                            deviceStatus.externalTemperature = temp.externalTemperature;
                 }
+            }
+            catch (Exception e)
+            {
+                SharedResources.LogMessage("GetStatusAndTemperature", "Error: " + e.Message + "\n" + e.StackTrace);
             }
         }
 
@@ -319,10 +325,7 @@ namespace ASCOM.HomeMade
         {
             try
             {
-                lock (lockObject)
-                {
-                    deviceStatus = ParseStatus(SharedResources.GetStatus());
-                }
+                GetStatusAndTemperature();
             }
             catch (Exception e)
             {
@@ -347,7 +350,7 @@ namespace ASCOM.HomeMade
             {
                 Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
                 // TODO customise this driver description
-                string driverInfo = "Robofocus ASCOM driver. Version: " + String.Format(CultureInfo.InvariantCulture, "{0}.{1}", version.Major, version.Minor);
+                string driverInfo = "Esatto ASCOM driver. Version: " + String.Format(CultureInfo.InvariantCulture, "{0}.{1}", version.Major, version.Minor);
                 SharedResources.LogMessage("DriverInfo Get", driverInfo);
                 return driverInfo;
             }
@@ -419,6 +422,7 @@ namespace ASCOM.HomeMade
                 if (deviceStatus.speed > 0) isMoving = true;
                 else isMoving = false;
 
+                SharedResources.LogMessage("IsMoving", "Focuser is "+(isMoving?"":"not")+" moving");
                 return isMoving;
             }
         }
