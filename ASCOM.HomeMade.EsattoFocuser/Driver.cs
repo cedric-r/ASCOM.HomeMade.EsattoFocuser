@@ -262,6 +262,13 @@ namespace ASCOM.HomeMade
                     {
                         deviceStatus = ParseStatus(SharedResources.GetStatus());
                     }
+                    lock (lockObject)
+                    {
+                        DeviceStatus temp = ParseTemperature(SharedResources.GetTemperature());
+                        if (deviceStatus != null)
+                            if (temp != null)
+                                deviceStatus.externalTemperature = temp.externalTemperature;
+                    }
                     Thread.Sleep(500);
                 }
                 catch(Exception e)
@@ -381,10 +388,6 @@ namespace ASCOM.HomeMade
 
         #region IFocuser Implementation
 
-        internal static int focuserPosition = 0; // Class level variable to hold the current focuser position
-        private const int focuserSteps = 10000;
-        private double LastTemperature { get; set; }
-
         public bool Absolute
         {
             get
@@ -439,7 +442,7 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("MaxIncrement Get", focuserSteps.ToString());
+                SharedResources.LogMessage("MaxIncrement Get", deviceStatus.maxStep.ToString());
                 return deviceStatus.maxStep; // Maximum change in one move
             }
         }
@@ -448,7 +451,7 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("MaxStep Get", focuserSteps.ToString());
+                SharedResources.LogMessage("MaxStep Get", deviceStatus.maxPosition.ToString());
                 return deviceStatus.maxPosition; // Maximum extent of the focuser, so position range is 0 to 10,000
             }
         }
@@ -524,8 +527,10 @@ namespace ASCOM.HomeMade
         {
             get
             {
+                SharedResources.LogMessage("Temperature Get", true.ToString());
                 CheckConnected("Temperature");
 
+                SharedResources.LogMessage("Temperature Get", "Temperature is "+ deviceStatus.externalTemperature);
                 return deviceStatus.externalTemperature;
             }
         }
