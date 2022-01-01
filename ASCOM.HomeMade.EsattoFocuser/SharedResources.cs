@@ -297,13 +297,15 @@ namespace ASCOM.HomeMade
             string temp = "";
             try
             {
-
+                temp = SharedSerial.ReceiveTerminated("\n");
+                /*
                 string s = SharedSerial.Receive();
                 while (!String.IsNullOrEmpty(s))
                 {
                     temp += s;
                     s = SharedSerial.Receive();
                 }
+                */
             }
             catch (Exception) { }
             return temp;
