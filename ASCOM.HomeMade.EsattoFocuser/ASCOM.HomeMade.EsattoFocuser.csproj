@@ -102,6 +102,7 @@
     <Compile Include="Protocol\ResponseCmdMOT1.cs" />
     <Compile Include="Protocol\ResponseGet.cs" />
     <Compile Include="Protocol\ResponseGetMOT1.cs" />
+    <Compile Include="Protocol\ResponseRes.cs" />
     <Compile Include="Protocol\ResponseStatus.cs" />
     <Compile Include="SetupDialogForm.cs">
       <SubType>Form</SubType>

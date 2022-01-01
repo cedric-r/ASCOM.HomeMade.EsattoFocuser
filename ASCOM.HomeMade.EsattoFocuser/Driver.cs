@@ -292,18 +292,17 @@ namespace ASCOM.HomeMade
             {
                 status.OK = true;
                 status.connected = true;
-                if (response.get != null)
-                {
-                    if (response.get.MOT1 != null)
-                    {
-                        status.maxPosition = response.get.MOT1.CAL_MAXPOS;
-                        status.position = response.get.MOT1.ABS_POS;
-                        status.maxStep = response.get.MOT1.CAL_MAXPOS;
-                        status.internalTemperature = response.get.MOT1.NTC_T;
-                        status.speed = response.get.MOT1.SPEED;
-                        status.busy = response.get.MOT1.STATUS.BUSY == 1;
-                    }
-                }
+                if (response.res != null)
+                    if (response.res.get != null)
+                        if (response.res.get.MOT1 != null)
+                        {
+                            status.maxPosition = response.res.get.MOT1.CAL_MAXPOS;
+                            status.position = response.res.get.MOT1.ABS_POS;
+                            status.maxStep = response.res.get.MOT1.CAL_MAXPOS;
+                            status.internalTemperature = response.res.get.MOT1.NTC_T;
+                            status.speed = response.res.get.MOT1.SPEED;
+                            status.busy = response.res.get.MOT1.STATUS.BUSY == 1;
+                        }
             }
             return status;
         }
@@ -315,10 +314,11 @@ namespace ASCOM.HomeMade
             {
                 status.OK = true;
                 status.connected = true;
-                if (response.get != null)
-                {
-                    status.externalTemperature = response.get.EXT_T;
-                }
+                if (response.res != null)
+                    if (response.res.get != null)
+                    {
+                        status.externalTemperature = response.res.get.EXT_T;
+                    }
             }
             return status;
         }

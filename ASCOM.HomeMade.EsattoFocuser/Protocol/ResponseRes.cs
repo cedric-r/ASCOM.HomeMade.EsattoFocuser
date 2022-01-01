@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace ASCOM.HomeMade.Protocol
 {
-    public class Response
+    public class ResponseRes
     {
-        public ResponseRes res;
+        public ResponseGet get;
+        public ResponseCmd cmd;
     }
 }
