@@ -67,16 +67,6 @@ namespace ASCOM.HomeMade
         private bool isMoving = false;
         static readonly object lockObject = new object();
 
-        /// <summary>
-        /// Private variable to hold an ASCOM Utilities object
-        /// </summary>
-        private Util utilities;
-
-        /// <summary>
-        /// Private variable to hold an ASCOM AstroUtilities object to provide the Range method
-        /// </summary>
-        private AstroUtils astroUtilities;
-
         private Thread statusThread = null;
         private DeviceStatus deviceStatus = new DeviceStatus();
         public static bool stopGetStatus = false;
@@ -93,9 +83,6 @@ namespace ASCOM.HomeMade
             SharedResources.LogMessage("Focuser", "Port is " + comPort);
 
             connectedState = false; // Initialise connected to false
-            utilities = new Util(); //Initialise util object
-            astroUtilities = new AstroUtils(); // Initialise astro utilities object
-            //TODO: Implement your additional construction here
 
             SharedResources.LogMessage("Focuser", "Completed initialisation");
         }
@@ -212,10 +199,6 @@ namespace ASCOM.HomeMade
         public void Dispose()
         {
             // Clean up the tracelogger and util objects
-            utilities.Dispose();
-            utilities = null;
-            astroUtilities.Dispose();
-            astroUtilities = null;
         }
 
         public bool Connected
@@ -275,7 +258,10 @@ namespace ASCOM.HomeMade
                 try
                 {
                     SharedResources.LogMessage("GetStatus", "Getting status");
-                    deviceStatus = ParseStatus(SharedResources.GetStatus());
+                    lock (lockObject)
+                    {
+                        deviceStatus = ParseStatus(SharedResources.GetStatus());
+                    }
                     Thread.Sleep(500);
                 }
                 catch(Exception e)
@@ -328,7 +314,7 @@ namespace ASCOM.HomeMade
             {
                 lock (lockObject)
                 {
-                    Protocol.Response response = SharedResources.GetStatus();
+                    deviceStatus = ParseStatus(SharedResources.GetStatus());
                 }
             }
             catch (Exception e)
@@ -412,7 +398,10 @@ namespace ASCOM.HomeMade
         {
             SharedResources.LogMessage("Halt", "Not implemented");
             CheckConnected("Halt");
-            SharedResources.Stop();
+            lock (lockObject)
+            {
+                SharedResources.Stop();
+            }
             SharedResources.LogMessage("Halt", "Stop motor movement");
         }
 
