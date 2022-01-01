@@ -309,8 +309,7 @@ namespace ASCOM.HomeMade
 
         internal static void LogMessage(string identifier, string message)
         {
-            var msg = string.Format(message);
-            LogMessage(DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString() + ": " + identifier + ": " + msg);
+            LogMessage(DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString() + ": " + identifier + ": " + message);
         }
 
         static readonly object fileLockObject = new object();
