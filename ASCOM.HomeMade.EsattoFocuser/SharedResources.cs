@@ -296,7 +296,12 @@ namespace ASCOM.HomeMade
             string temp = "";
             try
             {
-                return SharedSerial.Receive();
+                string s = SharedSerial.Receive();
+                while (!String.IsNullOrEmpty(s))
+                {
+                    temp += s;
+                    s = SharedSerial.Receive();
+                }
             }
             catch (Exception) { }
             return temp;
