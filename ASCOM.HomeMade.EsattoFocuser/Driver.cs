@@ -284,7 +284,7 @@ namespace ASCOM.HomeMade
 
         private DeviceStatus ParseStatus(Protocol.Response response)
         {
-            DeviceStatus status = null;
+            DeviceStatus status = new DeviceStatus();
             if (response != null)
             {
                 status.OK = true;
@@ -301,12 +301,16 @@ namespace ASCOM.HomeMade
                             status.busy = response.res.get.MOT1.STATUS.BUSY == 1;
                         }
             }
+            else
+            {
+                return null;
+            }
             return status;
         }
 
         private DeviceStatus ParseTemperature(Protocol.Response response)
         {
-            DeviceStatus status = null;
+            DeviceStatus status = new DeviceStatus();
             if (response != null)
             {
                 status.OK = true;
@@ -316,6 +320,10 @@ namespace ASCOM.HomeMade
                     {
                         status.externalTemperature = response.res.get.EXT_T;
                     }
+            }
+            else
+            {
+                return null;
             }
             return status;
         }
