@@ -262,10 +262,18 @@ namespace ASCOM.HomeMade
                 SharedResources.LogMessage("GetStatusAndTemperature", "Getting status");
                 DeviceStatus status = ParseStatus(SharedResources.GetStatus());
                 if (status != null)
+                {
                     if (temp != null)
+                    {
                         status.externalTemperature = temp.externalTemperature;
-                if (status.speed > 0) isMoving = true;
-                else isMoving = false;
+                    }
+                    else
+                    {
+                        status.externalTemperature = deviceStatus.externalTemperature;
+                    }
+                    if (status.speed > 0) isMoving = true;
+                    else isMoving = false;
+                }
                 if (status!=null) deviceStatus = status;
             }
             catch (Exception e)
@@ -276,7 +284,7 @@ namespace ASCOM.HomeMade
 
         private DeviceStatus ParseStatus(Protocol.Response response)
         {
-            DeviceStatus status = new DeviceStatus();
+            DeviceStatus status = null;
             if (response != null)
             {
                 status.OK = true;
@@ -298,7 +306,7 @@ namespace ASCOM.HomeMade
 
         private DeviceStatus ParseTemperature(Protocol.Response response)
         {
-            DeviceStatus status = new DeviceStatus();
+            DeviceStatus status = null;
             if (response != null)
             {
                 status.OK = true;
