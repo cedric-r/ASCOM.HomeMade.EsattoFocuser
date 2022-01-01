@@ -315,7 +315,7 @@ namespace ASCOM.HomeMade
         {
             try
             {
-                GetStatusAndTemperature();
+                //GetStatusAndTemperature();
             }
             catch (Exception e)
             {
