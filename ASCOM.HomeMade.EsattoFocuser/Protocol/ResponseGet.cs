@@ -8,7 +8,7 @@ namespace ASCOM.HomeMade.Protocol
 {
     public class ResponseGet
     {
-        public ResponseGetMOT1 MOT1;
-        public double EXT_T;
+        public ResponseGetMOT1 MOT1 { get; set; }
+        public double EXT_T { get; set; }
     }
 }

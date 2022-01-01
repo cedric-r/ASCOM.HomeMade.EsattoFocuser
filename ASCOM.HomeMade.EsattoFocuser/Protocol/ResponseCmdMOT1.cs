@@ -8,6 +8,6 @@ namespace ASCOM.HomeMade.Protocol
 {
     public class ResponseCmdMOT1
     {
-        public string GOTO;
+        public string GOTO { get; set; }
     }
 }

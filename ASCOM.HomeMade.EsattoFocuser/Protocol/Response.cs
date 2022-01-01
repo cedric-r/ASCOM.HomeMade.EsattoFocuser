@@ -8,6 +8,6 @@ namespace ASCOM.HomeMade.Protocol
 {
     public class Response
     {
-        public ResponseRes res;
+        public ResponseRes res { get; set; }
     }
 }

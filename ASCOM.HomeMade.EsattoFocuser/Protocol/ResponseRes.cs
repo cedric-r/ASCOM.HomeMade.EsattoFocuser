@@ -8,7 +8,7 @@ namespace ASCOM.HomeMade.Protocol
 {
     public class ResponseRes
     {
-        public ResponseGet get;
-        public ResponseCmd cmd;
+        public ResponseGet get { get; set; }
+        public ResponseCmd cmd { get; set; }
     }
 }

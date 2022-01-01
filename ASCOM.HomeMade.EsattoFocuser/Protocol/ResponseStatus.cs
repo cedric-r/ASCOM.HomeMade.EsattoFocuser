@@ -8,15 +8,15 @@ namespace ASCOM.HomeMade.Protocol
 {
     public class ResponseStatus
     {
-        public int HIZ;
-        public int UVLO;
-        public int TH_SD;
-        public int TH_WRN;
-        public int OCD;
-        public int WCMD;
-        public int NOPCMD;
-        public int BUSY;
-        public string DIR;
-        public string MST;
+        public int HIZ { get; set; }
+        public int UVLO { get; set; }
+        public int TH_SD { get; set; }
+        public int TH_WRN { get; set; }
+        public int OCD { get; set; }
+        public int WCMD { get; set; }
+        public int NOPCMD { get; set; }
+        public int BUSY { get; set; }
+        public string DIR { get; set; }
+        public string MST { get; set; }
     }
 }
