@@ -137,7 +137,7 @@ namespace ASCOM.HomeMade
                             {
                                 // Sets serial parameters
                                 SharedSerial.Speed = SerialSpeed.ps115200;
-                                SharedSerial.ReceiveTimeoutMs = 500;
+                                SharedSerial.ReceiveTimeoutMs = 200;
                                 SharedSerial.Connected = true;
 
                                 Connections++;
@@ -297,15 +297,13 @@ namespace ASCOM.HomeMade
             string temp = "";
             try
             {
-                temp = SharedSerial.ReceiveTerminated("\0");
-                /*
+
                 string s = SharedSerial.Receive();
                 while (!String.IsNullOrEmpty(s))
                 {
                     temp += s;
                     s = SharedSerial.Receive();
                 }
-                */
             }
             catch (Exception) { }
             return temp;
