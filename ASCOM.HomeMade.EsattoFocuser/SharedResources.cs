@@ -221,10 +221,11 @@ namespace ASCOM.HomeMade
         {
             LogMessage("SharedResources::Move", "Moving to " + position);
             string res = SendSerialMessage(GOTO.Replace("#POS#", position.ToString()));
+            Protocol.Response response = JsonConvert.DeserializeObject<Protocol.Response>(res);
             LogMessage("SharedResources::GetTemperature", "Received response: " + res);
-            if (!String.IsNullOrEmpty(res))
+            if (response != null)
             {
-                if (res == GOTO_RESPONSE) return true;
+                if (response.res.cmd.MOT1.GOTO.ToLower() == "done") return true;
                 return false;
             }
             else
