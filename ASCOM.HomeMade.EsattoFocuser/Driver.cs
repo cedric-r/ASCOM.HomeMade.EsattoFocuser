@@ -65,7 +65,6 @@ namespace ASCOM.HomeMade
         /// </summary>
         private bool connectedState;
         private bool isMoving = false;
-        static readonly object lockObject = new object();
 
         private Thread statusThread = null;
         private DeviceStatus deviceStatus = new DeviceStatus();
@@ -139,10 +138,7 @@ namespace ASCOM.HomeMade
 
             if (raw)
             {
-                lock (lockObject)
-                {
-                    SharedResources.SendSerialMessageBlind(command);
-                }
+                SharedResources.SendSerialMessageBlind(command);
             }
             else
             {
@@ -181,10 +177,7 @@ namespace ASCOM.HomeMade
 
             if (raw)
             {
-                lock (lockObject)
-                {
-                    return SharedResources.SendSerialMessage(command);
-                }
+                return SharedResources.SendSerialMessage(command);
             }
             else
             {
@@ -266,18 +259,12 @@ namespace ASCOM.HomeMade
             {
                 SharedResources.LogMessage("GetStatusAndTemperature", "Getting status");
                 DeviceStatus status;
-                lock (lockObject)
-                {
-                    status = ParseStatus(SharedResources.GetStatus());
-                }
+                status = ParseStatus(SharedResources.GetStatus());
                 SharedResources.LogMessage("GetStatusAndTemperature", "Getting temperature");
-                lock (lockObject)
-                {
-                    DeviceStatus temp = ParseTemperature(SharedResources.GetTemperature());
-                    if (status != null)
-                        if (temp != null)
-                            status.externalTemperature = temp.externalTemperature;
-                }
+                DeviceStatus temp = ParseTemperature(SharedResources.GetTemperature());
+                if (status != null)
+                    if (temp != null)
+                        status.externalTemperature = temp.externalTemperature;
                 if (status!=null) deviceStatus = status;
             }
             catch (Exception e)
@@ -406,10 +393,7 @@ namespace ASCOM.HomeMade
         {
             SharedResources.LogMessage("Halt", "Not implemented");
             CheckConnected("Halt");
-            lock (lockObject)
-            {
-                SharedResources.Stop();
-            }
+            SharedResources.Stop();
             SharedResources.LogMessage("Halt", "Stop motor movement");
         }
 
@@ -472,12 +456,9 @@ namespace ASCOM.HomeMade
             if (Position == deviceStatus.position) return;
 
             isMoving = true;
-            lock (lockObject)
+            if (SharedResources.Move(Position))
             {
-                if (SharedResources.Move(Position))
-                {
-                    isMoving = true;
-                }
+                isMoving = true;
             }
             isMoving = false;
 

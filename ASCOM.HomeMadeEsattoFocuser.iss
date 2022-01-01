@@ -1,13 +1,13 @@
 [Setup]
 AppID={{835503b2-4cbd-4675-b5aa-40f2af06180a}}
 AppName=ASCOM HomeMade EsattoFocuser Driver
-AppVerName=ASCOM HomeMade EsattoFocuser Driver 0.1.10
-AppVersion=0.1.10
+AppVerName=ASCOM HomeMade EsattoFocuser Driver 0.1.11
+AppVersion=0.1.11
 AppPublisher=Cedric Raguenaud <cedric@raguenaud.earth>
 AppPublisherURL=mailto:cedric@raguenaud.earth
 AppSupportURL=https://github.com/cedric-r/ASCOM.HomeMade.EsattoFocuser
 AppUpdatesURL=https://github.com/cedric-r/ASCOM.HomeMade.EsattoFocuser
-VersionInfoVersion=0.1.10
+VersionInfoVersion=0.1.11
 MinVersion=0,6.0
 DefaultDirName="{cf}\ASCOM\Focuser"
 DisableDirPage=yes
