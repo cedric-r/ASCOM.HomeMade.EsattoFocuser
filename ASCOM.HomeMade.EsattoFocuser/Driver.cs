@@ -67,8 +67,8 @@ namespace ASCOM.HomeMade
         private bool isMoving = false;
 
         private Thread statusThread = null;
-        private DeviceStatus deviceStatus = new DeviceStatus();
-        public static bool stopGetStatus = false;
+        private DeviceStatus deviceStatus = null;
+        public bool stopGetStatus = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeMade"/> class.
@@ -217,10 +217,7 @@ namespace ASCOM.HomeMade
                     SharedResources.Connected = true;
 
                     // Check if we are the first client using the shared serial
-                    if (SharedResources.Connections == 1)
-                    {
-                        InitDevice();
-                    }
+                    InitDevice();
 
                     statusThread = new Thread(new ThreadStart(() =>
                     {
@@ -331,7 +328,11 @@ namespace ASCOM.HomeMade
         {
             try
             {
-                //GetStatusAndTemperature();
+                while(deviceStatus == null)
+                {
+                    GetStatusAndTemperature();
+                    Thread.Sleep(300);
+                }
             }
             catch (Exception e)
             {
