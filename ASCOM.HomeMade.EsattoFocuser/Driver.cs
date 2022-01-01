@@ -265,18 +265,20 @@ namespace ASCOM.HomeMade
             try
             {
                 SharedResources.LogMessage("GetStatusAndTemperature", "Getting status");
+                DeviceStatus status;
                 lock (lockObject)
                 {
-                    deviceStatus = ParseStatus(SharedResources.GetStatus());
+                    status = ParseStatus(SharedResources.GetStatus());
                 }
                 SharedResources.LogMessage("GetStatusAndTemperature", "Getting temperature");
                 lock (lockObject)
                 {
                     DeviceStatus temp = ParseTemperature(SharedResources.GetTemperature());
-                    if (deviceStatus != null)
+                    if (status != null)
                         if (temp != null)
-                            deviceStatus.externalTemperature = temp.externalTemperature;
+                            status.externalTemperature = temp.externalTemperature;
                 }
+                if (status!=null) deviceStatus = status;
             }
             catch (Exception e)
             {
