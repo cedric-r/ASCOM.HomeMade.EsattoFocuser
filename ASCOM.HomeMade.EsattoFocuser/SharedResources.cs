@@ -131,9 +131,8 @@ namespace ASCOM.HomeMade
                         LogMessage("SharedResources::Connected", "This is the first client");
 
                         // Check for a valid serial port name
-                        // Removed 12/01/2022 because some com ports weren't detected and users should know best
-                        //if (Array.IndexOf(SharedSerial.AvailableCOMPorts, SharedSerial.PortName) > -1)
-                        //{
+                        if (Array.IndexOf(SharedSerial.AvailableCOMPorts, SharedSerial.PortName) > -1)
+                        {
                             lock (lockObject)
                             {
                                 // Sets serial parameters
@@ -144,11 +143,11 @@ namespace ASCOM.HomeMade
                                 Connections++;
                                 LogMessage("SharedResources::Connected", "Connected successfully");
                             }
-                        //}
-                        //else
-                        //{
-                            //LogMessage("SharedResources::Connected", "Connection aborted, invalid serial port name");
-                        //}
+                        }
+                        else
+                        {
+                            LogMessage("SharedResources::Connected", "Connection aborted, invalid serial port name");
+                        }
                     }
                     else
                     {

@@ -214,6 +214,7 @@ namespace ASCOM.HomeMade
                         SharedResources.LogMessage("Connected", "We are the first connected client, setting serial port name");
                     }
 
+                    SharedResources.COMPortName = comPort;
                     SharedResources.Connected = true;
 
                     // Check if we are the first client using the shared serial
@@ -437,7 +438,6 @@ namespace ASCOM.HomeMade
             set
             {
                 SharedResources.LogMessage("Link Set", value.ToString());
-                SharedResources.COMPortName = comPort;
                 this.Connected = value; // Direct function to the connected method, the Link method is just here for backwards compatibility
             }
         }
