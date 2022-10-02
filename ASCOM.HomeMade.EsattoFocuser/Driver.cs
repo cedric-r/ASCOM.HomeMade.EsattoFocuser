@@ -294,7 +294,7 @@ namespace ASCOM.HomeMade
                             status.maxPosition = response.res.get.MOT1.CAL_MAXPOS;
                             status.position = response.res.get.MOT1.ABS_POS;
                             status.maxStep = response.res.get.MOT1.CAL_MAXPOS;
-                            status.internalTemperature = Double.Parse(response.res.get.MOT1.NTC_T);
+                            status.internalTemperature = double.Parse(response.res.get.MOT1.NTC_T.Replace(',', '.'), CultureInfo.InvariantCulture);
                             status.speed = response.res.get.MOT1.SPEED;
                             status.busy = response.res.get.MOT1.STATUS.BUSY == 1;
                         }
