@@ -222,7 +222,7 @@ namespace ASCOM.HomeMade
             LogMessage("SharedResources::Move", "Moving to " + position);
             string res = SendSerialMessage(GOTO.Replace("#POS#", position.ToString()));
             Protocol.Response response = JsonConvert.DeserializeObject<Protocol.Response>(res);
-            LogMessage("SharedResources::GetTemperature", "Received response: " + res);
+            LogMessage("SharedResources::Move", "Received response: " + res);
             if (response != null)
             {
                 if (response.res.cmd.MOT1.GOTO.ToLower() == "done") return true;
@@ -249,9 +249,10 @@ namespace ASCOM.HomeMade
             {
                 lock (lockObject)
                 {
+                    LogMessage("SharedResources::SendSerialMessage", "Sending message: " + CMD_START + message + CMD_END);
                     SharedSerial.ClearBuffers();
                     SharedSerial.Transmit(CMD_START + message + CMD_END);
-                    LogMessage("SharedResources::SendSerialMessage", "Message: "+ CMD_START + message + CMD_END);
+                    LogMessage("SharedResources::SendSerialMessage", "Reading response");
 
                     try
                     {

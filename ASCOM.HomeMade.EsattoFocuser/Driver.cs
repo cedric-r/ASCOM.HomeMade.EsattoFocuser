@@ -247,14 +247,17 @@ namespace ASCOM.HomeMade
             while(!stopGetStatus)
             {
                 GetStatusAndTemperature();
-                Thread.Sleep(100);
+                Thread.Sleep(500);
             }
         }
 
+        private static bool readingStatus = false;
         private void GetStatusAndTemperature()
         {
+            if (readingStatus) return; // Avoid re-entrance if device is slow
             try
             {
+                readingStatus = true;
                 SharedResources.LogMessage("GetStatusAndTemperature", "Getting temperature");
                 DeviceStatus temp = ParseTemperature(SharedResources.GetTemperature());
                 SharedResources.LogMessage("GetStatusAndTemperature", "Getting status");
@@ -278,6 +281,7 @@ namespace ASCOM.HomeMade
             {
                 SharedResources.LogMessage("GetStatusAndTemperature", "Error: " + e.Message + "\n" + e.StackTrace);
             }
+            finally { readingStatus = false; }
         }
 
         private DeviceStatus ParseStatus(Protocol.Response response)
@@ -325,6 +329,7 @@ namespace ASCOM.HomeMade
             }
             return status;
         }
+
         private void InitDevice()
         {
             try
@@ -420,7 +425,7 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("IsMoving", "Checking is focuser is moving");
+                SharedResources.LogMessage("IsMoving", "Checking if focuser is moving");
                 CheckConnected("IsMoving");
 
                 SharedResources.LogMessage("IsMoving", "Focuser is "+(isMoving?"":"not")+" moving");
