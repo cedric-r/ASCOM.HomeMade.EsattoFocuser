@@ -247,7 +247,7 @@ namespace ASCOM.HomeMade
             while(!stopGetStatus)
             {
                 GetStatusAndTemperature();
-                Thread.Sleep(500);
+                Thread.Sleep(100);
             }
         }
 
@@ -332,7 +332,7 @@ namespace ASCOM.HomeMade
                 while(deviceStatus == null)
                 {
                     GetStatusAndTemperature();
-                    Thread.Sleep(300);
+                    Thread.Sleep(100);
                 }
             }
             catch (Exception e)
