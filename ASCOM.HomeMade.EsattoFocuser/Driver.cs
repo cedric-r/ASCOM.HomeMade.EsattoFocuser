@@ -358,7 +358,7 @@ namespace ASCOM.HomeMade
             {
                 Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
                 // TODO customise this driver description
-                string driverInfo = "Esatto ASCOM driver. Version: " + String.Format(CultureInfo.InvariantCulture, "{0}.{1}", version.Major, version.Minor);
+                string driverInfo = "Esatto ASCOM driver. Version: " + String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}", version.Major, version.Minor, version.Revision);
                 SharedResources.LogMessage("DriverInfo Get", driverInfo);
                 return driverInfo;
             }
@@ -369,7 +369,7 @@ namespace ASCOM.HomeMade
             get
             {
                 Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-                string driverVersion = String.Format(CultureInfo.InvariantCulture, "{0}.{1}", version.Major, version.Minor);
+                string driverVersion = String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}", version.Major, version.Minor, version.Revision);
                 SharedResources.LogMessage("DriverVersion Get", driverVersion);
                 return driverVersion;
             }
