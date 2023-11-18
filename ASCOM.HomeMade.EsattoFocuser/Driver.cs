@@ -134,7 +134,7 @@ namespace ASCOM.HomeMade
         public void CommandBlind(string command, bool raw)
         {
             //CheckConnected("CommandBlind");
-            SharedResources.LogMessage("CommandBlind", "Command: "+command+", raw: "+ raw.ToString());
+            SharedResources.LogMessage("CommandBlind", "Command: " + command + ", raw: " + raw.ToString());
 
             if (raw)
             {
@@ -244,20 +244,17 @@ namespace ASCOM.HomeMade
 
         private void GetStatusThreadJob()
         {
-            while(!stopGetStatus)
+            while (!stopGetStatus)
             {
                 GetStatusAndTemperature();
-                Thread.Sleep(100);
+                Thread.Sleep(500);
             }
         }
 
-        private static bool readingStatus = false;
         private void GetStatusAndTemperature()
         {
-            if (readingStatus) return; // Avoid re-entrance if device is slow
             try
             {
-                readingStatus = true;
                 SharedResources.LogMessage("GetStatusAndTemperature", "Getting temperature");
                 DeviceStatus temp = ParseTemperature(SharedResources.GetTemperature());
                 SharedResources.LogMessage("GetStatusAndTemperature", "Getting status");
@@ -275,13 +272,12 @@ namespace ASCOM.HomeMade
                     if (status.speed > 0) isMoving = true;
                     else isMoving = false;
                 }
-                if (status!=null) deviceStatus = status;
+                if (status != null) deviceStatus = status;
             }
             catch (Exception e)
             {
                 SharedResources.LogMessage("GetStatusAndTemperature", "Error: " + e.Message + "\n" + e.StackTrace);
             }
-            finally { readingStatus = false; }
         }
 
         private DeviceStatus ParseStatus(Protocol.Response response)
@@ -329,15 +325,14 @@ namespace ASCOM.HomeMade
             }
             return status;
         }
-
         private void InitDevice()
         {
             try
             {
-                while(deviceStatus == null)
+                while (deviceStatus == null)
                 {
                     GetStatusAndTemperature();
-                    Thread.Sleep(100);
+                    Thread.Sleep(300);
                 }
             }
             catch (Exception e)
@@ -363,7 +358,7 @@ namespace ASCOM.HomeMade
             {
                 Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
                 // TODO customise this driver description
-                string driverInfo = "Esatto ASCOM driver. Version: " + String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}", version.Major, version.Minor, version.Revision);
+                string driverInfo = "Esatto ASCOM driver. Version: " + String.Format(CultureInfo.InvariantCulture, "{0}.{1}", version.Major, version.Minor);
                 SharedResources.LogMessage("DriverInfo Get", driverInfo);
                 return driverInfo;
             }
@@ -374,7 +369,7 @@ namespace ASCOM.HomeMade
             get
             {
                 Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-                string driverVersion = String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}", version.Major, version.Minor, version.Revision);
+                string driverVersion = String.Format(CultureInfo.InvariantCulture, "{0}.{1}", version.Major, version.Minor);
                 SharedResources.LogMessage("DriverVersion Get", driverVersion);
                 return driverVersion;
             }
@@ -425,10 +420,10 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("IsMoving", "Checking if focuser is moving");
+                SharedResources.LogMessage("IsMoving", "Checking is focuser is moving");
                 CheckConnected("IsMoving");
 
-                SharedResources.LogMessage("IsMoving", "Focuser is "+(isMoving?"":"not")+" moving");
+                SharedResources.LogMessage("IsMoving", "Focuser is " + (isMoving ? "" : "not") + " moving");
                 return isMoving;
             }
         }
@@ -467,7 +462,7 @@ namespace ASCOM.HomeMade
 
         public void Move(int Position)
         {
-            SharedResources.LogMessage("Move", "Move motor to "+ Position);
+            SharedResources.LogMessage("Move", "Move motor to " + Position);
 
             CheckConnected("Move");
 
@@ -536,7 +531,7 @@ namespace ASCOM.HomeMade
                 SharedResources.LogMessage("Temperature Get", true.ToString());
                 CheckConnected("Temperature");
 
-                SharedResources.LogMessage("Temperature Get", "Temperature is "+ deviceStatus.externalTemperature);
+                SharedResources.LogMessage("Temperature Get", "Temperature is " + deviceStatus.externalTemperature);
                 return deviceStatus.externalTemperature;
             }
         }
@@ -671,12 +666,12 @@ namespace ASCOM.HomeMade
             }
         }
 
-            /// <summary>
-            /// Log helper function that takes formatted strings and arguments
-            /// </summary>
-            /// <param name="identifier"></param>
-            /// <param name="message"></param>
-            /// <param name="args"></param>
+        /// <summary>
+        /// Log helper function that takes formatted strings and arguments
+        /// </summary>
+        /// <param name="identifier"></param>
+        /// <param name="message"></param>
+        /// <param name="args"></param>
         internal static void LogMessage(string identifier, string message, params object[] args)
         {
             var msg = string.Format(message, args);

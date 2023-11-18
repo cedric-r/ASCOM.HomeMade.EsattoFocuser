@@ -23,13 +23,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 
 namespace ASCOM.HomeMade
 {
     public static class SharedResources
     {
-        private static Mutex mutex = new Mutex();
+        // object used for locking to prevent multiple drivers accessing common code at the same time
+        private static readonly object lockObject = new object();
 
         // Shared serial port. This will allow multiple drivers to use one single serial port.
         private static readonly ASCOM.Utilities.Serial ASCOMSerial = new ASCOM.Utilities.Serial();
@@ -89,7 +89,7 @@ namespace ASCOM.HomeMade
                 }
 
                 SharedSerial.PortName = value;
-                LogMessage("SharedResources::COMPortName", "New serial port name: "+ value);
+                LogMessage("SharedResources::COMPortName", "New serial port name: " + value);
             }
         }
 
@@ -114,7 +114,7 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                LogMessage("SharedResources::Connected", "SharedSerial.Connected: "+ SharedSerial.Connected.ToString());
+                LogMessage("SharedResources::Connected", "SharedSerial.Connected: " + SharedSerial.Connected.ToString());
                 return SharedSerial.Connected;
             }
             set
@@ -133,19 +133,16 @@ namespace ASCOM.HomeMade
                         // Check for a valid serial port name
                         if (Array.IndexOf(SharedSerial.AvailableCOMPorts, SharedSerial.PortName) > -1)
                         {
-                            try
+                            lock (lockObject)
                             {
-                                mutex.WaitOne();
                                 // Sets serial parameters
-                                SharedSerial.Speed = SerialSpeed.ps9600;
+                                SharedSerial.Speed = SerialSpeed.ps115200;
                                 SharedSerial.ReceiveTimeout = 1;
                                 SharedSerial.Connected = true;
 
                                 Connections++;
                                 LogMessage("SharedResources::Connected", "Connected successfully");
                             }
-                            catch { }
-                            finally { mutex.ReleaseMutex(); }
                         }
                         else
                         {
@@ -154,23 +151,19 @@ namespace ASCOM.HomeMade
                     }
                     else
                     {
-                        try
+                        lock (lockObject)
                         {
-                            mutex.WaitOne();
                             Connections++;
                             LogMessage("SharedResources::Connected", "Connected successfully");
                         }
-                        catch { }
-                        finally { mutex.ReleaseMutex(); }
                     }
                 }
                 else
                 {
                     LogMessage("SharedResources::Connected", "Disconnect request");
 
-                    try
+                    lock (lockObject)
                     {
-                        mutex.WaitOne();
                         // Check if we are the last client connected
                         if (Connections == 1)
                         {
@@ -186,8 +179,6 @@ namespace ASCOM.HomeMade
                         Connections--;
                         LogMessage("SharedResources::Connected", "Disconnected successfully");
                     }
-                    catch { }
-                    finally { mutex.ReleaseMutex(); }
                 }
             }
         }
@@ -231,7 +222,7 @@ namespace ASCOM.HomeMade
             LogMessage("SharedResources::Move", "Moving to " + position);
             string res = SendSerialMessage(GOTO.Replace("#POS#", position.ToString()));
             Protocol.Response response = JsonConvert.DeserializeObject<Protocol.Response>(res);
-            LogMessage("SharedResources::Move", "Received response: " + res);
+            LogMessage("SharedResources::GetTemperature", "Received response: " + res);
             if (response != null)
             {
                 if (response.res.cmd.MOT1.GOTO.ToLower() == "done") return true;
@@ -256,28 +247,24 @@ namespace ASCOM.HomeMade
 
             if (SharedSerial.Connected)
             {
-                try
-                { 
-                    mutex.WaitOne();
-                    LogMessage("SharedResources::SendSerialMessage", "Sending message: " + CMD_START + message + CMD_END);
+                lock (lockObject)
+                {
                     SharedSerial.ClearBuffers();
                     SharedSerial.Transmit(CMD_START + message + CMD_END);
-                    LogMessage("SharedResources::SendSerialMessage", "Reading response");
+                    LogMessage("SharedResources::SendSerialMessage", "Message: " + CMD_START + message + CMD_END);
 
                     try
                     {
                         retval = Receive();
-                        LogMessage("SharedResources::SendSerialMessage", "Message received: "+ retval);
+                        LogMessage("SharedResources::SendSerialMessage", "Message received: " + retval);
                     }
                     catch (Exception e)
                     {
                         LogMessage("SharedResources::SendSerialMessage", "Serial timeout exception while receiving data: " + e.Message + "\n" + e.StackTrace);
                     }
 
-                    LogMessage("SharedResources::SendSerialMessage", "Message sent: "+ CMD_START + message + CMD_END + " received: "+ retval);
+                    LogMessage("SharedResources::SendSerialMessage", "Message sent: " + CMD_START + message + CMD_END + " received: " + retval);
                 }
-                catch { }
-                finally { mutex.ReleaseMutex(); }
             }
             else
             {
@@ -292,14 +279,11 @@ namespace ASCOM.HomeMade
         {
             if (SharedSerial.Connected)
             {
-                try
+                lock (lockObject)
                 {
-                    mutex.WaitOne();
                     SharedSerial.Transmit(CMD_START + message + CMD_END);
-                    LogMessage("SharedResources::SendSerialMessage", "Message: "+ CMD_START + message + CMD_END);
+                    LogMessage("SharedResources::SendSerialMessage", "Message: " + CMD_START + message + CMD_END);
                 }
-                catch { }
-                finally { mutex.ReleaseMutex(); }
             }
             else
             {
@@ -342,7 +326,7 @@ namespace ASCOM.HomeMade
                     if (TraceEnabled) File.AppendAllText(@"c:\temp\EsattoFocuser.log", message + "\n");
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 // Swallow it.
             }
