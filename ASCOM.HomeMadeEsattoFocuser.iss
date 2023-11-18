@@ -1,13 +1,13 @@
 [Setup]
 AppID={{835503b2-4cbd-4675-b5aa-40f2af06180a}}
 AppName=ASCOM HomeMade EsattoFocuser Driver
-AppVerName=ASCOM HomeMade EsattoFocuser Driver 0.1.26.0
-AppVersion=0.1.26.0
+AppVerName=ASCOM HomeMade EsattoFocuser Driver 0.1.26.4
+AppVersion=0.1.26.4
 AppPublisher=Cedric Raguenaud <cedric@raguenaud.earth>
 AppPublisherURL=mailto:cedric@raguenaud.earth
 AppSupportURL=https://github.com/cedric-r/ASCOM.HomeMade.EsattoFocuser
 AppUpdatesURL=https://github.com/cedric-r/ASCOM.HomeMade.EsattoFocuser
-VersionInfoVersion=0.1.26.0
+VersionInfoVersion=0.1.26.4
 MinVersion=0,6.0
 DefaultDirName="{cf}\ASCOM\Focuser"
 DisableDirPage=yes
@@ -18,7 +18,7 @@ Compression=lzma
 SolidCompression=yes
 ; Put there by Platform if Driver Installer Support selected
 WizardImageFile="C:\Program Files (x86)\ASCOM\Platform 6 Developer Components\Installer Generator\Resources\WizardImage.bmp"
-LicenseFile="k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\License"
+LicenseFile="k:\astro\ASCOM.HomeMade.EsattoFocuser\License"
 ; {cf}\ASCOM\Uninstall\Focuser folder created by Platform, always
 UninstallFilesDir="{cf}\ASCOM\Uninstall\Focuser\HomeMade EsattoFocuser"
 
@@ -30,30 +30,30 @@ Name: "{cf}\ASCOM\Uninstall\Focuser\HomeMade EsattoFocuser"
 ; TODO: Add subfolders below {app} as needed (e.g. Name: "{app}\MyFolder")
 
 [Files]
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.HomeMade.EsattoFocuser.dll"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.HomeMade.EsattoFocuser.dll"; DestDir: "{app}"
 ; Require a read-me HTML to appear after installation, maybe driver's Help doc
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\readme.txt"; DestDir: "{app}"; Flags: isreadme
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\readme.txt"; DestDir: "{app}"; Flags: isreadme
 ; TODO: Add other files needed by your driver here (add subfolders above)
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.HomeMade.EsattoFocuser.dll.config"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.DeviceInterfaces.dll"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.DeviceInterfaces.xml"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Utilities.dll"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Utilities.xml"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Exceptions.dll"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Exceptions.xml"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Utilities.Video.dll"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Astrometry.dll"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Astrometry.xml"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.SettingsProvider.dll"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.SettingsProvider.xml"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Attributes.dll"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Attributes.xml"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Controls.dll"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Controls.xml"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Internal.Extensions.dll"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Internal.Extensions.xml"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\Newtonsoft.Json.dll"; DestDir: "{app}"
-Source: "k:\astro\E-EYE perso\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\Newtonsoft.Json.xml"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.HomeMade.EsattoFocuser.dll.config"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.DeviceInterfaces.dll"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.DeviceInterfaces.xml"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Utilities.dll"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Utilities.xml"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Exceptions.dll"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Exceptions.xml"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Utilities.Video.dll"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Astrometry.dll"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Astrometry.xml"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.SettingsProvider.dll"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.SettingsProvider.xml"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Attributes.dll"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Attributes.xml"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Controls.dll"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Controls.xml"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Internal.Extensions.dll"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\ASCOM.Internal.Extensions.xml"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\Newtonsoft.Json.dll"; DestDir: "{app}"
+Source: "k:\astro\ASCOM.HomeMade.EsattoFocuser\ASCOM.HomeMade.EsattoFocuser\bin\Debug\Newtonsoft.Json.xml"; DestDir: "{app}"
 
 ; Only if driver is .NET
 [Run]
