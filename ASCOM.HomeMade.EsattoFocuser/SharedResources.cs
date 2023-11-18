@@ -280,8 +280,6 @@ namespace ASCOM.HomeMade
                     {
                         LogMessage("SharedResources::SendSerialMessage", "Serial timeout exception while receiving data: " + e.Message + "\n" + e.StackTrace);
                     }
-
-                    LogMessage("SharedResources::SendSerialMessage", "Message sent: "+ CMD_START + message + CMD_END + " received: "+ retval);
                 }
                 catch { }
                 finally { mutex.ReleaseMutex(); }
