@@ -247,7 +247,7 @@ namespace ASCOM.HomeMade
             while(!stopGetStatus)
             {
                 GetStatusAndTemperature();
-                Thread.Sleep(500);
+                Thread.Sleep(100);
             }
         }
 
