@@ -77,13 +77,13 @@ namespace ASCOM.HomeMade
         public Focuser()
         {
             ReadProfile(); // Read device configuration from the ASCOM Profile store
-            SharedResources.LogMessage("Focuser", "Starting initialisation");
+            SharedResources.Get().LogMessage("Focuser", "Starting initialisation");
 
-            SharedResources.LogMessage("Focuser", "Port is " + comPort);
+            SharedResources.Get().LogMessage("Focuser", "Port is " + comPort);
 
             connectedState = false; // Initialise connected to false
 
-            SharedResources.LogMessage("Focuser", "Completed initialisation");
+            SharedResources.Get().LogMessage("Focuser", "Completed initialisation");
         }
 
 
@@ -120,7 +120,7 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("SupportedActions Get", "Returning empty arraylist");
+                SharedResources.Get().LogMessage("SupportedActions Get", "Returning empty arraylist");
                 return new ArrayList();
             }
         }
@@ -134,11 +134,11 @@ namespace ASCOM.HomeMade
         public void CommandBlind(string command, bool raw)
         {
             //CheckConnected("CommandBlind");
-            SharedResources.LogMessage("CommandBlind", "Command: " + command + ", raw: " + raw.ToString());
+            SharedResources.Get().LogMessage("CommandBlind", "Command: " + command + ", raw: " + raw.ToString());
 
             if (raw)
             {
-                SharedResources.SendSerialMessageBlind(command);
+                SharedResources.Get().SendSerialMessageBlind(command);
             }
             else
             {
@@ -177,7 +177,7 @@ namespace ASCOM.HomeMade
 
             if (raw)
             {
-                return SharedResources.SendSerialMessage(command);
+                return SharedResources.Get().SendSerialMessage(command);
             }
             else
             {
@@ -206,16 +206,16 @@ namespace ASCOM.HomeMade
 
                 if (value)
                 {
-                    SharedResources.LogMessage("Connected", "Starting a new serial connection");
+                    SharedResources.Get().LogMessage("Connected", "Starting a new serial connection");
 
                     // Check if we are the first client using the shared serial
-                    if (SharedResources.Connections == 0)
+                    if (SharedResources.Get().Connections == 0)
                     {
-                        SharedResources.LogMessage("Connected", "We are the first connected client, setting serial port name");
+                        SharedResources.Get().LogMessage("Connected", "We are the first connected client, setting serial port name");
                     }
 
-                    SharedResources.COMPortName = comPort;
-                    SharedResources.Connected = true;
+                    SharedResources.Get().COMPortName = comPort;
+                    SharedResources.Get().Connected = true;
 
                     // Check if we are the first client using the shared serial
                     InitDevice();
@@ -228,16 +228,16 @@ namespace ASCOM.HomeMade
                     statusThread.Start();
 
                     connectedState = true;
-                    SharedResources.LogMessage("Connected", "Connected successfully");
+                    SharedResources.Get().LogMessage("Connected", "Connected successfully");
                 }
                 else
                 {
-                    SharedResources.LogMessage("Connected", "Disconnecting the serial connection");
+                    SharedResources.Get().LogMessage("Connected", "Disconnecting the serial connection");
                     stopGetStatus = true;
                     statusThread = null;
                     connectedState = false;
-                    SharedResources.Connected = false;
-                    SharedResources.LogMessage("Connected", "Disconnected successfully");
+                    SharedResources.Get().Connected = false;
+                    SharedResources.Get().LogMessage("Connected", "Disconnected successfully");
                 }
             }
         }
@@ -255,10 +255,10 @@ namespace ASCOM.HomeMade
         {
             try
             {
-                SharedResources.LogMessage("GetStatusAndTemperature", "Getting temperature");
-                DeviceStatus temp = ParseTemperature(SharedResources.GetTemperature());
-                SharedResources.LogMessage("GetStatusAndTemperature", "Getting status");
-                DeviceStatus status = ParseStatus(SharedResources.GetStatus());
+                SharedResources.Get().LogMessage("GetStatusAndTemperature", "Getting temperature");
+                DeviceStatus temp = ParseTemperature(SharedResources.Get().GetTemperature());
+                SharedResources.Get().LogMessage("GetStatusAndTemperature", "Getting status");
+                DeviceStatus status = ParseStatus(SharedResources.Get().GetStatus());
                 if (status != null)
                 {
                     if (temp != null)
@@ -276,7 +276,7 @@ namespace ASCOM.HomeMade
             }
             catch (Exception e)
             {
-                SharedResources.LogMessage("GetStatusAndTemperature", "Error: " + e.Message + "\n" + e.StackTrace);
+                SharedResources.Get().LogMessage("GetStatusAndTemperature", "Error: " + e.Message + "\n" + e.StackTrace);
             }
         }
 
@@ -347,7 +347,7 @@ namespace ASCOM.HomeMade
             // TODO customise this device description
             get
             {
-                SharedResources.LogMessage("Description Get", driverDescription);
+                SharedResources.Get().LogMessage("Description Get", driverDescription);
                 return driverDescription;
             }
         }
@@ -359,7 +359,7 @@ namespace ASCOM.HomeMade
                 Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
                 // TODO customise this driver description
                 string driverInfo = "Esatto ASCOM driver. Version: " + String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}", version.Major, version.Minor, version.Revision);
-                SharedResources.LogMessage("DriverInfo Get", driverInfo);
+                SharedResources.Get().LogMessage("DriverInfo Get", driverInfo);
                 return driverInfo;
             }
         }
@@ -370,7 +370,7 @@ namespace ASCOM.HomeMade
             {
                 Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
                 string driverVersion = String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}", version.Major, version.Minor, version.Revision);
-                SharedResources.LogMessage("DriverVersion Get", driverVersion);
+                SharedResources.Get().LogMessage("DriverVersion Get", driverVersion);
                 return driverVersion;
             }
         }
@@ -390,7 +390,7 @@ namespace ASCOM.HomeMade
             get
             {
                 string name = "HomeMade EsattoFocuser";
-                SharedResources.LogMessage("Name Get", name);
+                SharedResources.Get().LogMessage("Name Get", name);
                 return name;
             }
         }
@@ -403,27 +403,27 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("Absolute Get", true.ToString());
+                SharedResources.Get().LogMessage("Absolute Get", true.ToString());
                 return true; // This is an absolute focuser
             }
         }
 
         public void Halt()
         {
-            SharedResources.LogMessage("Halt", "Not implemented");
+            SharedResources.Get().LogMessage("Halt", "Not implemented");
             CheckConnected("Halt");
-            SharedResources.Stop();
-            SharedResources.LogMessage("Halt", "Stop motor movement");
+            SharedResources.Get().Stop();
+            SharedResources.Get().LogMessage("Halt", "Stop motor movement");
         }
 
         public bool IsMoving
         {
             get
             {
-                SharedResources.LogMessage("IsMoving", "Checking is focuser is moving");
+                SharedResources.Get().LogMessage("IsMoving", "Checking is focuser is moving");
                 CheckConnected("IsMoving");
 
-                SharedResources.LogMessage("IsMoving", "Focuser is " + (isMoving ? "" : "not") + " moving");
+                SharedResources.Get().LogMessage("IsMoving", "Focuser is " + (isMoving ? "" : "not") + " moving");
                 return isMoving;
             }
         }
@@ -432,12 +432,12 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("Link Get", this.Connected.ToString());
+                SharedResources.Get().LogMessage("Link Get", this.Connected.ToString());
                 return this.Connected; // Direct function to the connected method, the Link method is just here for backwards compatibility
             }
             set
             {
-                SharedResources.LogMessage("Link Set", value.ToString());
+                SharedResources.Get().LogMessage("Link Set", value.ToString());
                 this.Connected = value; // Direct function to the connected method, the Link method is just here for backwards compatibility
             }
         }
@@ -446,7 +446,7 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("MaxIncrement Get", deviceStatus.maxStep.ToString());
+                SharedResources.Get().LogMessage("MaxIncrement Get", deviceStatus.maxStep.ToString());
                 return deviceStatus.maxStep; // Maximum change in one move
             }
         }
@@ -455,14 +455,14 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("MaxStep Get", deviceStatus.maxPosition.ToString());
+                SharedResources.Get().LogMessage("MaxStep Get", deviceStatus.maxPosition.ToString());
                 return deviceStatus.maxPosition; // Maximum extent of the focuser, so position range is 0 to 10,000
             }
         }
 
         public void Move(int Position)
         {
-            SharedResources.LogMessage("Move", "Move motor to " + Position);
+            SharedResources.Get().LogMessage("Move", "Move motor to " + Position);
 
             CheckConnected("Move");
 
@@ -470,13 +470,13 @@ namespace ASCOM.HomeMade
             if (Position == deviceStatus.position) return;
 
             isMoving = true;
-            if (!SharedResources.Move(Position))
+            if (!SharedResources.Get().Move(Position))
             {
                 isMoving = false;
-                SharedResources.LogMessage("Move", "Move error");
+                SharedResources.Get().LogMessage("Move", "Move error");
             }
 
-            SharedResources.LogMessage("Move", "Move order done");
+            SharedResources.Get().LogMessage("Move", "Move order done");
         }
 
 
@@ -484,7 +484,7 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("Position", "Getting current position");
+                SharedResources.Get().LogMessage("Position", "Getting current position");
                 CheckConnected("Position");
 
                 return deviceStatus.position;
@@ -496,7 +496,7 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("StepSize Get", "Not implemented");
+                SharedResources.Get().LogMessage("StepSize Get", "Not implemented");
                 throw new ASCOM.PropertyNotImplementedException("StepSize", false);
             }
         }
@@ -505,12 +505,12 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("TempComp Get", false.ToString());
+                SharedResources.Get().LogMessage("TempComp Get", false.ToString());
                 return false;
             }
             set
             {
-                SharedResources.LogMessage("TempComp Set", "Not implemented");
+                SharedResources.Get().LogMessage("TempComp Set", "Not implemented");
                 throw new ASCOM.PropertyNotImplementedException("TempComp", false);
             }
         }
@@ -519,7 +519,7 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("TempCompAvailable Get", false.ToString());
+                SharedResources.Get().LogMessage("TempCompAvailable Get", false.ToString());
                 return false; // Temperature compensation is not available in this driver
             }
         }
@@ -528,10 +528,10 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.LogMessage("Temperature Get", true.ToString());
+                SharedResources.Get().LogMessage("Temperature Get", true.ToString());
                 CheckConnected("Temperature");
 
-                SharedResources.LogMessage("Temperature Get", "Temperature is " + deviceStatus.externalTemperature);
+                SharedResources.Get().LogMessage("Temperature Get", "Temperature is " + deviceStatus.externalTemperature);
                 return deviceStatus.externalTemperature;
             }
         }
@@ -675,7 +675,7 @@ namespace ASCOM.HomeMade
         internal static void LogMessage(string identifier, string message, params object[] args)
         {
             var msg = string.Format(message, args);
-            SharedResources.LogMessage(identifier, msg);
+            SharedResources.Get().LogMessage(identifier, msg);
         }
         #endregion
     }

@@ -19,16 +19,21 @@
 using ASCOM.Utilities;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ASCOM.HomeMade
 {
-    public static class SharedResources
+    public class SharedResources
     {
+        private static SharedResources _Instance = null;
+
         // object used for locking to prevent multiple drivers accessing common code at the same time
         private static readonly Mutex mutex = new Mutex(false);
 
@@ -37,6 +42,11 @@ namespace ASCOM.HomeMade
 
         // Counter for the number of connections to the serial port
         private static int ConnectedClients = 0;
+
+        private static ConcurrentQueue<TimeSpan> _Queue = new ConcurrentQueue<TimeSpan>();
+        private static bool _Stop = false;
+        private static int _TOOSLOW = 2000;
+        private BackgroundWorker _Worker = null;
 
         // Donc bother to implement all the structures for simple calls
         static string GET_STATUS = "{\"req\":{\"get\":{\"MOT1\":\"\"}}}";
@@ -60,11 +70,16 @@ namespace ASCOM.HomeMade
         //
         // Public access to shared resources
         //
+        public static SharedResources Get()
+        {
+            if (_Instance == null) _Instance = new SharedResources();
+            return _Instance;
+        }
 
         /// <summary>
         /// Shared serial port
         /// </summary>
-        private static ASCOM.Utilities.Serial SharedSerial
+        private ASCOM.Utilities.Serial SharedSerial
         {
             get
             {
@@ -75,7 +90,7 @@ namespace ASCOM.HomeMade
         /// <summary>
         /// number of connections to the shared serial port
         /// </summary>
-        public static string COMPortName
+        public string COMPortName
         {
             get
             {
@@ -97,7 +112,7 @@ namespace ASCOM.HomeMade
         /// <summary>
         /// number of connections to the shared serial port
         /// </summary>
-        public static int Connections
+        public int Connections
         {
             get
             {
@@ -111,7 +126,7 @@ namespace ASCOM.HomeMade
             }
         }
 
-        public static bool Connected
+        public bool Connected
         {
             get
             {
@@ -144,6 +159,11 @@ namespace ASCOM.HomeMade
 
                                 Connections++;
                                 LogMessage("SharedResources::Connected", "Connected successfully");
+
+                                LogMessage("SharedResources::Connected", "Starting watchdog");
+                                _Worker = new BackgroundWorker();
+                                _Worker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.Worker1_DoWork);
+                                LogMessage("SharedResources::Connected", "Watchdog started");
                             }
                             catch { }
                             finally { mutex.ReleaseMutex(); }
@@ -175,6 +195,7 @@ namespace ASCOM.HomeMade
                         // Check if we are the last client connected
                         if (Connections == 1)
                         {
+                            _Stop = true;
                             SharedSerial.ClearBuffers();
                             SharedSerial.Connected = false;
                             LogMessage("SharedResources::Connected", "This is the last client, disconnecting the serial port");
@@ -193,7 +214,7 @@ namespace ASCOM.HomeMade
             }
         }
 
-        public static Protocol.Response GetStatus()
+        public Protocol.Response GetStatus()
         {
             LogMessage("SharedResources::GetStatus", "Getting status");
             string res = SendSerialMessage(GET_STATUS);
@@ -210,7 +231,7 @@ namespace ASCOM.HomeMade
             return null;
         }
 
-        public static Protocol.Response GetTemperature()
+        public Protocol.Response GetTemperature()
         {
             LogMessage("SharedResources::GetTemperature", "Getting external temperature");
             string res = SendSerialMessage(GET_EXT_T);
@@ -227,7 +248,7 @@ namespace ASCOM.HomeMade
             return null;
         }
 
-        public static bool Move(int position)
+        public bool Move(int position)
         {
             LogMessage("SharedResources::Move", "Moving to " + position);
             string res = SendSerialMessage(GOTO.Replace("#POS#", position.ToString()));
@@ -245,13 +266,13 @@ namespace ASCOM.HomeMade
             return false;
         }
 
-        public static void Stop()
+        public void Stop()
         {
             LogMessage("SharedResources::Stop", "Stopping");
             string res = SendSerialMessage(STOP);
         }
 
-        public static string SendSerialMessage(string message)
+        public string SendSerialMessage(string message)
         {
             string retval = String.Empty;
 
@@ -293,7 +314,7 @@ namespace ASCOM.HomeMade
             return retval;
         }
 
-        public static void SendSerialMessageBlind(string message)
+        public void SendSerialMessageBlind(string message)
         {
             if (SharedSerial.Connected)
             {
@@ -316,7 +337,7 @@ namespace ASCOM.HomeMade
             }
         }
 
-        public static string Receive()
+        public string Receive()
         {
             string temp = "";
             try
@@ -335,13 +356,13 @@ namespace ASCOM.HomeMade
             return temp;
         }
 
-        internal static void LogMessage(string identifier, string message)
+        internal void LogMessage(string identifier, string message)
         {
             LogMessage(DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString() + ": " + identifier + ": " + message);
         }
 
         static readonly object fileLockObject = new object();
-        internal static void LogMessage(string message)
+        internal void LogMessage(string message)
         {
             try
             {
@@ -354,6 +375,51 @@ namespace ASCOM.HomeMade
             {
                 // Swallow it.
             }
+        }
+
+        private void Worker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Watchdog();
+        }
+
+        private void Watchdog()
+        {
+            while (!_Stop)
+            {
+                if (_Queue.Count > 0)
+                {
+                    LogMessage("SharedResources::Watchdog", "Dequeueing");
+                    _Queue.TryDequeue(out TimeSpan timing);
+                    if (timing > TimeSpan.FromMilliseconds(_TOOSLOW))
+                    {
+                        LogMessage("SharedResources::Watchdog", "Timing is too high");
+                        _Queue = new ConcurrentQueue<TimeSpan>();
+                        DisconnectReconnect();
+                    }
+                }
+                Thread.Sleep(500);
+            }
+        }
+
+        private void DisconnectReconnect()
+        {
+            try
+            {
+                mutex.WaitOne();
+                if (Connections >= 1)
+                {
+                    LogMessage("SharedResources::DisconnectReconnect", "Disconnecting and reconnecting port");
+                    SharedSerial.ClearBuffers();
+                    SharedSerial.Connected = false;
+                    Thread.Sleep(1000);
+                    SharedSerial.Speed = SerialSpeed.ps115200;
+                    SharedSerial.ReceiveTimeout = 1;
+                    SharedSerial.Connected = true;
+                    LogMessage("SharedResources::DisconnectReconnect", "Port reconnected");
+                }
+            }
+            catch { }
+            finally { mutex.ReleaseMutex(); }
         }
     }
 }
