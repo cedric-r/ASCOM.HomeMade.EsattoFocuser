@@ -235,7 +235,7 @@ namespace ASCOM.HomeMade
                 {
                     SharedResources.Get().LogMessage("Connected", "Disconnecting the serial connection");
                     stopGetStatus = true;
-                    if (statusThread.ThreadState == statusThread.Running)
+                    if (statusThread.ThreadState == System.Threading.ThreadState.Running)
                         statusThread.Abort();
                     statusThread = null;
                     connectedState = false;
