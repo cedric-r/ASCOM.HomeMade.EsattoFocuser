@@ -225,6 +225,7 @@ namespace ASCOM.HomeMade
                         GetStatusThreadJob();
                     }));
                     statusThread.IsBackground = true;
+                    statusThread.Priority = ThreadPriority.BelowNormal;
                     statusThread.Start();
 
                     connectedState = true;
@@ -234,6 +235,8 @@ namespace ASCOM.HomeMade
                 {
                     SharedResources.Get().LogMessage("Connected", "Disconnecting the serial connection");
                     stopGetStatus = true;
+                    if (statusThread.ThreadState == statusThread.Running)
+                        statusThread.Abort();
                     statusThread = null;
                     connectedState = false;
                     SharedResources.Get().Connected = false;

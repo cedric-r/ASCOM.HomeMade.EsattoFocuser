@@ -43,10 +43,10 @@ namespace ASCOM.HomeMade
         // Counter for the number of connections to the serial port
         private static int ConnectedClients = 0;
 
-        private static ConcurrentQueue<TimeSpan> _Queue = new ConcurrentQueue<TimeSpan>();
+        private static ConcurrentQueue<double> _Queue = new ConcurrentQueue<double>();
         private static bool _Stop = false;
         private static int _TOOSLOW = 2000;
-        private BackgroundWorker _Worker = null;
+        private Thread _Worker = null;
 
         // Donc bother to implement all the structures for simple calls
         static string GET_STATUS = "{\"req\":{\"get\":{\"MOT1\":\"\"}}}";
@@ -161,8 +161,10 @@ namespace ASCOM.HomeMade
                                 LogMessage("SharedResources::Connected", "Connected successfully");
 
                                 LogMessage("SharedResources::Connected", "Starting watchdog");
-                                _Worker = new BackgroundWorker();
-                                _Worker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.Worker1_DoWork);
+                                _Worker = new Thread(new ThreadStart(() => Watchdog()));
+                                _Worker.Priority = ThreadPriority.BelowNormal;
+                                _Worker.IsBackground = true;
+                                _Worker.Start();
                                 LogMessage("SharedResources::Connected", "Watchdog started");
                             }
                             catch { }
@@ -195,10 +197,16 @@ namespace ASCOM.HomeMade
                         // Check if we are the last client connected
                         if (Connections == 1)
                         {
-                            _Stop = true;
+                            LogMessage("SharedResources::Connected", "This is the last client, disconnecting the serial port");
                             SharedSerial.ClearBuffers();
                             SharedSerial.Connected = false;
-                            LogMessage("SharedResources::Connected", "This is the last client, disconnecting the serial port");
+
+                            LogMessage("SharedResources::Connected", "Stopping watchdog");
+                            _Stop = true;
+                            if (_Worker.ThreadState == ThreadState.Running)
+                                _Worker.Abort();
+                            _Worker = null;
+                            LogMessage("SharedResources::Connected", "Watchdog stopped");
                         }
                         else
                         {
@@ -287,6 +295,7 @@ namespace ASCOM.HomeMade
                     SharedSerial.Transmit(CMD_START + message + CMD_END);
                     DateTime end = DateTime.Now;
                     LogMessage("SharedResources::SendSerialMessage", "Transmit took " + (end - start).TotalMilliseconds + "ms");
+                    _Queue.Enqueue((end - start).TotalMilliseconds);
 
 
                     try
@@ -296,6 +305,7 @@ namespace ASCOM.HomeMade
                         retval = Receive();
                         end = DateTime.Now;
                         LogMessage("SharedResources::SendSerialMessage", "Receive took " + (end - start).TotalMilliseconds + "ms");
+                        _Queue.Enqueue((end - start).TotalMilliseconds);
                     }
                     catch (Exception e)
                     {
@@ -326,6 +336,7 @@ namespace ASCOM.HomeMade
                     SharedSerial.Transmit(CMD_START + message + CMD_END);
                     DateTime end = DateTime.Now;
                     LogMessage("SharedResources::SendSerialMessage", "Transmit took " + (end - start).TotalMilliseconds + "ms");
+                    _Queue.Enqueue((end - start).TotalMilliseconds);
                 }
                 catch { }
                 finally { mutex.ReleaseMutex(); }
@@ -377,23 +388,17 @@ namespace ASCOM.HomeMade
             }
         }
 
-        private void Worker1_DoWork(object sender, DoWorkEventArgs e)
-        {
-            Watchdog();
-        }
-
         private void Watchdog()
         {
             while (!_Stop)
             {
                 if (_Queue.Count > 0)
                 {
-                    LogMessage("SharedResources::Watchdog", "Dequeueing");
-                    _Queue.TryDequeue(out TimeSpan timing);
-                    if (timing > TimeSpan.FromMilliseconds(_TOOSLOW))
+                    _Queue.TryDequeue(out double timing);
+                    if (timing > _TOOSLOW)
                     {
                         LogMessage("SharedResources::Watchdog", "Timing is too high");
-                        _Queue = new ConcurrentQueue<TimeSpan>();
+                        _Queue = new ConcurrentQueue<double>();
                         DisconnectReconnect();
                     }
                 }
