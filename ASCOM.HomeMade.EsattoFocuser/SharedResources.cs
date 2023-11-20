@@ -136,7 +136,7 @@ namespace ASCOM.HomeMade
                         {
                             try
                             {
-                                mutex.WaitOne(5000);
+                                mutex.WaitOne();
                                 // Sets serial parameters
                                 SharedSerial.Speed = SerialSpeed.ps115200;
                                 SharedSerial.ReceiveTimeout = 1;
@@ -157,7 +157,7 @@ namespace ASCOM.HomeMade
                     {
                         try
                         {
-                            mutex.WaitOne(5000);
+                            mutex.WaitOne();
                             Connections++;
                             LogMessage("SharedResources::Connected", "Connected successfully");
                         }
@@ -171,7 +171,7 @@ namespace ASCOM.HomeMade
 
                     try
                     {
-                        mutex.WaitOne(5000);
+                        mutex.WaitOne();
                         // Check if we are the last client connected
                         if (Connections == 1)
                         {
@@ -259,7 +259,7 @@ namespace ASCOM.HomeMade
             {
                 try
                 {
-                    mutex.WaitOne(5000);
+                    mutex.WaitOne();
                     LogMessage("SharedResources::SendSerialMessage", "Message: " + CMD_START + message + CMD_END);
                     SharedSerial.ClearBuffers();
                     DateTime start = DateTime.Now;
@@ -299,7 +299,7 @@ namespace ASCOM.HomeMade
             {
                 try
                 {
-                    mutex.WaitOne(5000);
+                    mutex.WaitOne();
                     LogMessage("SharedResources::SendSerialMessage", "Message: " + CMD_START + message + CMD_END);
                     DateTime start = DateTime.Now;
                     SharedSerial.Transmit(CMD_START + message + CMD_END);
