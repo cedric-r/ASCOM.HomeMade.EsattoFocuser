@@ -361,7 +361,7 @@ namespace ASCOM.HomeMade
             {
                 Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
                 // TODO customise this driver description
-                string driverInfo = "Esatto ASCOM driver. Version: " + String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}", version.Major, version.Minor, version.Revision);
+                string driverInfo = "Esatto ASCOM driver. Version: " + String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}", version.Major, version.Minor, version.Build);
                 SharedResources.Get().LogMessage("DriverInfo Get", driverInfo);
                 return driverInfo;
             }
@@ -372,7 +372,7 @@ namespace ASCOM.HomeMade
             get
             {
                 Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-                string driverVersion = String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}", version.Major, version.Minor, version.Revision);
+                string driverVersion = String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}", version.Major, version.Minor, version.Build);
                 SharedResources.Get().LogMessage("DriverVersion Get", driverVersion);
                 return driverVersion;
             }
@@ -423,7 +423,7 @@ namespace ASCOM.HomeMade
         {
             get
             {
-                SharedResources.Get().LogMessage("IsMoving", "Checking is focuser is moving");
+                SharedResources.Get().LogMessage("IsMoving", "Checking if focuser is moving");
                 CheckConnected("IsMoving");
 
                 SharedResources.Get().LogMessage("IsMoving", "Focuser is " + (isMoving ? "" : "not") + " moving");

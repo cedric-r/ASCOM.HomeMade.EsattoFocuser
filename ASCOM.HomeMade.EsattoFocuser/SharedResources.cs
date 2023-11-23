@@ -43,6 +43,8 @@ namespace ASCOM.HomeMade
         // Counter for the number of connections to the serial port
         private static int ConnectedClients = 0;
 
+        private static bool _StartWatchdog = true;
+        private static bool _ActiveWatchdog = false;
         private static ConcurrentQueue<double> _Queue = new ConcurrentQueue<double>();
         private static bool _Stop = false;
         private static int _TOOSLOW = 2000;
@@ -160,12 +162,15 @@ namespace ASCOM.HomeMade
                                 Connections++;
                                 LogMessage("SharedResources::Connected", "Connected successfully");
 
-                                LogMessage("SharedResources::Connected", "Starting watchdog");
-                                _Worker = new Thread(new ThreadStart(() => Watchdog()));
-                                _Worker.Priority = ThreadPriority.BelowNormal;
-                                _Worker.IsBackground = true;
-                                _Worker.Start();
-                                LogMessage("SharedResources::Connected", "Watchdog started");
+                                if (_StartWatchdog)
+                                {
+                                    LogMessage("SharedResources::Connected", "Starting watchdog");
+                                    _Worker = new Thread(new ThreadStart(() => Watchdog()));
+                                    _Worker.Priority = ThreadPriority.BelowNormal;
+                                    _Worker.IsBackground = true;
+                                    _Worker.Start();
+                                    LogMessage("SharedResources::Connected", "Watchdog started");
+                                }
                             }
                             catch { }
                             finally { mutex.ReleaseMutex(); }
@@ -201,12 +206,16 @@ namespace ASCOM.HomeMade
                             SharedSerial.ClearBuffers();
                             SharedSerial.Connected = false;
 
-                            LogMessage("SharedResources::Connected", "Stopping watchdog");
-                            _Stop = true;
-                            if (_Worker.ThreadState == ThreadState.Running)
-                                _Worker.Abort();
-                            _Worker = null;
-                            LogMessage("SharedResources::Connected", "Watchdog stopped");
+                            if (_StartWatchdog)
+                            {
+                                LogMessage("SharedResources::Connected", "Stopping watchdog");
+                                _Stop = true;
+                                if (_Worker.ThreadState == ThreadState.Running)
+                                    _Worker.Abort();
+                                _Worker = null;
+                                _Queue = new ConcurrentQueue<double>();
+                                LogMessage("SharedResources::Connected", "Watchdog stopped");
+                            }
                         }
                         else
                         {
@@ -398,8 +407,11 @@ namespace ASCOM.HomeMade
                     if (timing > _TOOSLOW)
                     {
                         LogMessage("SharedResources::Watchdog", "Timing is too high");
-                        _Queue = new ConcurrentQueue<double>();
-                        DisconnectReconnect();
+                        if (_ActiveWatchdog)
+                        {
+                            _Queue = new ConcurrentQueue<double>();
+                            DisconnectReconnect();
+                        }
                     }
                 }
                 Thread.Sleep(500);
